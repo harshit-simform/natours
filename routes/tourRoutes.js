@@ -8,7 +8,7 @@ const {
   aliasTopTours,
   getTourStats,
   getMonthlyPlan,
-} = require('../contollers/tourControllers');
+} = require('../controllers/tourControllers');
 
 const router = express.Router();
 
