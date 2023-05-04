@@ -6,8 +6,8 @@ const sendEmail = async (options) => {
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
     auth: {
-      user: process.env.EMAIL_USERNAME,
-      password: process.env.EMAIL_PASSWORD,
+      user: 'f9e6b5bbcd7e62',
+      pass: '5b561629e99b0d',
     },
   });
 
@@ -18,6 +18,7 @@ const sendEmail = async (options) => {
     subject: options.subject,
     text: options.message,
   };
+  console.log(mailOptions);
   //3) actually send the email
   await transporter.sendMail(mailOptions);
 };
