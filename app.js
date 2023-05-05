@@ -1,15 +1,16 @@
 const express = require('express');
 const morgan = require('morgan');
 
+const hpp = require('hpp');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const xxs = require('xss-clean');
+const mongoSanitize = require('express-mongo-sanitize');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorControllers');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
-const rateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-const mongoSanitize = require('express-mongo-sanitize');
-const xxs = require('xss-clean');
-const hpp = require('hpp');
+const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
 // 1) Global middlewares
@@ -62,6 +63,7 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 // for halnding all routes that has not been defined yet(error handling)
 app.all('*', (req, res, next) => {

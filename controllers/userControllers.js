@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const { deleteOne, updateOne, getOne, getAll } = require('./handleFactory');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -10,38 +11,26 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-  res.status(200).json({
-    status: 'success',
-    result: users.length,
-    data: { users },
-  });
-});
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'this route has not yet defined',
+    message: 'This route has is not defined. Please use /signup instead.',
   });
 };
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'this route has not yet defined',
-  });
+
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
 };
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'this route has not yet defined',
+
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
   });
-};
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'this route has not yet defined',
-  });
-};
+});
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   //1) create error if user post password data
@@ -65,11 +54,11 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteMe = catchAsync(async (req, res, next) => {
-  await User.findByIdAndUpdate(req.user.id, { active: false });
+exports.getAllUsers = getAll(User);
 
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
-});
+exports.getUser = getOne(User);
+
+exports.deleteUser = deleteOne(User);
+
+//Do not update password with this feature!
+exports.updateUser = updateOne(User);

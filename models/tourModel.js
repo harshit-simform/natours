@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+// const User = require('./userModel');
 // const validator = require('validator');
 
 const tourSchema = new mongoose.Schema(
@@ -83,15 +84,30 @@ const tourSchema = new mongoose.Schema(
       //GeoJSON
       type: {
         type: String,
-        default: 'point',
-        enum: ['point'],
+        default: 'Point',
+        enum: ['Point'],
       },
       coordinates: [Number],
       address: String,
       description: String,
     },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    guides: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
   },
   {
+    // we use this to add any virtual properties that are not part of database but is calculated based on some other prop.
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
@@ -99,6 +115,12 @@ const tourSchema = new mongoose.Schema(
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
+});
+
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
 });
 
 // DOCUMENT MIDDLEWARE: runs only on .create() and .save() not on .insertMany
@@ -110,6 +132,14 @@ tourSchema.pre('save', function (next) {
 //QUERY MIDDLEWARE
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passswordChangedAt',
+  });
   next();
 });
 
