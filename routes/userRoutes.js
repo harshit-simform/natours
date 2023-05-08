@@ -27,10 +27,14 @@ router.post('/signup', signup);
 router.post('/login', login);
 router.post('/forgotPassword', forgotPassword);
 router.patch('/resetPassword/:token', resetPassword);
-router.patch('/updateMyPassword', protect, updatePassword);
-router.patch('/updateMe', protect, updateMe);
-router.delete('/deleteMe', protect, deleteMe);
-router.get('/me', protect, getMe, getUser);
+
+router.use(protect); // protect all routes after this middleware
+router.patch('/updateMyPassword', updatePassword);
+router.patch('/updateMe', updateMe);
+router.delete('/deleteMe', deleteMe);
+router.get('/me', getMe, getUser);
+
+router.use(restrictTo('admin'));
 router.route('/').get(getAllUsers).post(createUser);
 router.route('/:id').get(getUser).delete(deleteUser).patch(updateUser);
 
