@@ -11,6 +11,8 @@ const {
   updateMe,
   deleteMe,
   getMe,
+  uploadUserPhoto,
+  resizeUserPhoto,
 } = require('../controllers/userControllers');
 
 const {
@@ -32,7 +34,7 @@ router.patch('/resetPassword/:token', resetPassword);
 
 router.use(protect); // protect all routes after this middleware
 router.patch('/updateMyPassword', updatePassword);
-router.patch('/updateMe', updateMe);
+router.patch('/updateMe', uploadUserPhoto, resizeUserPhoto, updateMe);
 router.delete('/deleteMe', deleteMe);
 router.get('/me', getMe, getUser);
 
