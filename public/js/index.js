@@ -3,13 +3,14 @@ import '@babel/polyfill';
 import { login, logout } from './login';
 import { displayMap } from './mapbox';
 import { updateSettings } from './updateSettings';
+import { bookTour } from './stripe';
 
 const mapBox = document.getElementById('map');
 const loginForm = document.querySelector('.form--login');
 const logOutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password ');
-
+const bookButton = document.getElementById('book-tour');
 // delegation
 if (mapBox) {
   const locations = JSON.parse(mapBox.dataset.location);
@@ -59,5 +60,14 @@ if (userPasswordForm) {
     );
     document.querySelector('.btn--save-password').textContent = 'save password';
     userPasswordForm.reset();
+  });
+}
+
+if (bookButton) {
+  console.log('in vook');
+  bookButton.addEventListener('click', async (e) => {
+    e.target.textContent = 'Processing....';
+    const { tourId } = e.target.dataset;
+    await bookTour(tourId);
   });
 }
